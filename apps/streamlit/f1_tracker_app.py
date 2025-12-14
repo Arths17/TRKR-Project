@@ -345,6 +345,85 @@ def check_extreme_gaps(entries: List[PredictionEntry], threshold: float = 120.0)
             extreme_gaps.append((entry.driver, entry.gap))
     return extreme_gaps
 
+
+def seed_sample_data() -> None:
+    """Seed a minimal Qatar 2024 dataset when the database is empty."""
+    db = SessionLocal()
+    try:
+        if db.query(Race).count() > 0:
+            return
+
+        race = Race(
+            year=2024,
+            round=23,
+            name="Qatar",
+            circuit="Lusail International Circuit",
+            event_date=datetime(2024, 12, 1)
+        )
+        db.add(race)
+        db.flush()
+
+        prediction = Prediction(
+            race_id=race.id,
+            confidence_level="HIGH",
+            confidence_score=92.0,
+            feature_coverage=0.893,
+            num_imputed=3,
+            status="frozen"
+        )
+        db.add(prediction)
+        db.flush()
+
+        entries = [
+            ("VER", 1, 0.0, 5465.3, 2.0),
+            ("LEC", 2, 11.6, 5476.9, 3.0),
+            ("PIA", 3, 25.1, 5490.4, 3.5),
+            ("RUS", 4, 47.5, 5512.8, 4.0),
+            ("GAS", 5, 60.5, 5525.8, 4.0),
+        ]
+        for driver, pos, gap, time_s, unc in entries:
+            db.add(PredictionEntry(
+                prediction_id=prediction.id,
+                driver=driver,
+                team="",
+                predicted_position=pos,
+                predicted_race_time=time_s,
+                gap=gap,
+                uncertainty=unc,
+            ))
+
+        results = [
+            ("VER", 1, 5465.3, "Finished", 25),
+            ("LEC", 2, 6.0, "Finished", 18),
+            ("PIA", 3, 6.8, "Finished", 15),
+            ("RUS", 4, 14.1, "Finished", 12),
+            ("GAS", 5, 16.8, "Finished", 10),
+        ]
+        for driver, pos, gap, status, pts in results:
+            db.add(RaceResult(
+                race_id=race.id,
+                driver=driver,
+                team="",
+                position=pos,
+                time=gap,
+                status=status,
+                points=pts,
+            ))
+
+        db.add(EvaluationMetric(
+            prediction_id=prediction.id,
+            position_mae=1.6,
+            time_mae_seconds=8.4,
+            winner_correct=True,
+            podium_accuracy=1.0,
+        ))
+
+        db.commit()
+    except Exception as e:
+        st.warning(f"Sample data seed failed: {e}")
+    finally:
+        db.close()
+
 def export_to_excel(dataframes: Dict[str, pd.DataFrame], filename: str) -> bytes:
     """Export multiple DataFrames to Excel with multiple sheets."""
     output = io.BytesIO()
@@ -741,7 +820,10 @@ def main():
     st.title("🏎️ F1 Prediction Tracker")
     st.markdown("**Production-Ready Race Prediction System** | FastF1 + XGBoost ML")
     st.markdown("---")
-    
+
+    # Ensure there is at least sample data so the UI can render
+    seed_sample_data()
+
     # Check if database has data
     races = load_all_races()
     if not races:
