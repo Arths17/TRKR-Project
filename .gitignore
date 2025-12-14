@@ -1,0 +1,72 @@
+# .gitignore for F1 Prediction System
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# FastF1 cache
+cache/
+*.cache
+
+# Models and predictions (keep trained models but ignore cache)
+# models/ - Commented out to include trained models in repo
+predictions/
+# *.pkl - Commented out to include trained models
+*.joblib
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data files
+*.csv
+*.json
+*.parquet
+
+# Logs
+*.log
+logs/
+
+# Database (SQLite)
+*.db
+f1prod.db
+
+# Environment variables
+.env
+
+# Streamlit cache
+.streamlit/
