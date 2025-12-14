@@ -17,7 +17,10 @@ Features:
 
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent))
+
+# Add project root to path (app/ is 2 directories up from apps/streamlit/)
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
 
 import streamlit as st
 import pandas as pd
