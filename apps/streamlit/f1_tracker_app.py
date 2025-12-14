@@ -250,12 +250,16 @@ def format_confidence(level: str, score: float) -> str:
 
 def format_coverage(coverage: float) -> str:
     """Format feature coverage percentage."""
-    if coverage >= 0.85:
-        return f"✅ **Excellent** ({coverage*100:.1f}%)"
-    elif coverage >= 0.70:
-        return f"⚠️ **Good** ({coverage*100:.1f}%)"
+    # Handle both decimal (0.66) and percentage (66) values
+    coverage_pct = coverage if coverage <= 1.0 else coverage / 100
+    display_pct = coverage_pct * 100
+    
+    if coverage_pct >= 0.85:
+        return f"✅ **Excellent** ({display_pct:.1f}%)"
+    elif coverage_pct >= 0.70:
+        return f"⚠️ **Good** ({display_pct:.1f}%)"
     else:
-        return f"❌ **Below Target** ({coverage*100:.1f}%)"
+        return f"❌ **Below Target** ({display_pct:.1f}%)"
 
 def format_time(seconds: Optional[float]) -> str:
     """Format seconds to MM:SS.mmm format."""
@@ -870,11 +874,11 @@ def main():
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            st.metric("Year", race.year if race.year else "⚠️ N/A")
+            st.metric("Year", race.year or "⚠️ N/A")
         with col2:
-            st.metric("Round", race.round if race.round else "⚠️ N/A")
+            st.metric("Round", race.round or "⚠️ N/A")
         with col3:
-            st.metric("Circuit", race.circuit if race.circuit else "⚠️ N/A")
+            st.metric("Circuit", race.circuit or "⚠️ N/A")
         with col4:
             if race.event_date:
                 event_date = race.event_date.strftime("%Y-%m-%d")
