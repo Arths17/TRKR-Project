@@ -10,11 +10,20 @@ from datetime import datetime
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+# Add parent directory for imports
+parent_dir = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(parent_dir))
 
 from trkr.utils import live, visuals, metrics
-from app.database import SessionLocal
-from app import models
+
+# Import database and models (will work once app is initialized)
+try:
+    from app.database import SessionLocal
+    from app import models
+except ImportError:
+    st.error("Database modules not available. Ensure app is properly initialized.")
+    SessionLocal = None
+    models = None
 
 
 def show():

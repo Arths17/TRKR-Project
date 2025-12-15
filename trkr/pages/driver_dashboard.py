@@ -122,8 +122,13 @@ def show():
         driver_laps = lap_data[lap_data['Driver'] == selected_driver].sort_values('LapNumber')
         
         if not driver_laps.empty:
+            # Select only available columns
+            display_cols = ['LapNumber', 'LapTime', 'IsAccurate']
+            if 'Position' in driver_laps.columns:
+                display_cols.append('Position')
+            
             st.dataframe(
-                driver_laps[['LapNumber', 'LapTime', 'IsAccurate', 'PitOutLap']].head(50),
+                driver_laps[display_cols].head(50),
                 use_container_width=True,
                 hide_index=True
             )

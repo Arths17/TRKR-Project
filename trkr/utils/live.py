@@ -99,9 +99,14 @@ def get_lap_data(session) -> pd.DataFrame:
     laps['GapToLeader'] = laps.groupby('Driver')['LapTime'].diff().fillna(pd.Timedelta(0))
     laps['GapToLeaderSec'] = laps['GapToLeader'].dt.total_seconds()
     
-    return laps[[
-        'Driver', 'LapNumber', 'LapTime', 'GapToLeader', 'IsAccurate', 'PitOutLap'
-    ]]
+    # Select available columns only
+    available_cols = ['Driver', 'LapNumber', 'LapTime', 'IsAccurate']
+    if 'GapToLeader' in laps.columns:
+        available_cols.append('GapToLeader')
+    if 'Position' in laps.columns:
+        available_cols.append('Position')
+    
+    return laps[available_cols]
 
 
 def get_driver_telemetry(session, driver: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -119,13 +124,30 @@ def get_driver_telemetry(session, driver: str) -> Tuple[pd.DataFrame, pd.DataFra
         if session is None:
             return pd.DataFrame(), pd.DataFrame()
         
-        # Get best lap
-        best_lap = session.laps.pick_driver(driver).pick_fastest()
+        # Ensure telemetry is loaded for this session
+        try:
+            session.load(telemetry=True, weather=False, messages=False)
+        except:
+            pass  # Session may already be loaded
         
-        if best_lap is None:
+        # Get best lap
+        driver_laps = session.laps.pick_driver(driver)
+        if driver_laps.empty:
             return pd.DataFrame(), pd.DataFrame()
         
-        telemetry = best_lap.get_telemetry()
+        best_lap = driver_laps.pick_fastest()
+        
+        if best_lap is None or best_lap.empty:
+            return pd.DataFrame(), pd.DataFrame()
+        
+        # Get telemetry - may need to load for this lap
+        try:
+            telemetry = best_lap.get_telemetry()
+        except:
+            return pd.DataFrame(), best_lap
+        
+        if telemetry is None or telemetry.empty:
+            return pd.DataFrame(), best_lap
         
         return telemetry, best_lap
     except Exception as e:

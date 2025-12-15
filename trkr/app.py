@@ -11,13 +11,24 @@ import sys
 from pathlib import Path
 
 # Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent))
+parent_dir = Path(__file__).parent.parent
+sys.path.insert(0, str(parent_dir))
 
 import streamlit as st
-from app.database import Base, engine
 
-# Initialize database tables
-Base.metadata.create_all(bind=engine)
+# Initialize database tables (lazy load to avoid circular imports)
+@st.cache_resource
+def init_database():
+    from app.database import Base, engine
+    try:
+        Base.metadata.create_all(bind=engine)
+        return engine
+    except Exception as e:
+        st.warning(f"Database initialization: {e}")
+        return None
+
+# Initialize on first run
+init_database()
 
 # Page configuration
 st.set_page_config(
