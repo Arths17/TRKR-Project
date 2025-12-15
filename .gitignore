@@ -69,4 +69,4 @@ f1prod.db
 .env
 
 # Streamlit cache
-.streamlit/
+.streamlit/modules/
