@@ -1,49 +1,48 @@
-# 🏎️ F1 Prediction Tracker
+# 🏎️ TRKR — F1 Race Tracker & AI Predictions
 
-[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.29+-red.svg)](https://streamlit.io)
-[![FastF1](https://img.shields.io/badge/FastF1-3.0+-green.svg)](https://theoehrly.github.io/Fast-F1/)
+[![Python](https://img.shields.io/badge/Python-3.13+-blue.svg)](https://www.python.org/downloads/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.52+-red.svg)](https://streamlit.io)
+[![FastF1](https://img.shields.io/badge/FastF1-3.7+-green.svg)](https://theoehrly.github.io/Fast-F1/)
+[![Plotly](https://img.shields.io/badge/Plotly-6.5+-orange.svg)](https://plotly.com/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-A production-ready F1 race prediction system with interactive web dashboard, powered by XGBoost machine learning and real-time FastF1 data.
+**TRKR** is a comprehensive multipage Streamlit application for F1 race analysis, live tracking, and AI-powered predictions. Access real-time FastF1 data, interactive telemetry visualizations, historical statistics, and ML-driven race forecasts all in one place.
 
-![F1 Tracker Demo](https://via.placeholder.com/800x400.png?text=F1+Prediction+Tracker+Dashboard)
+## ✨ Core Features
 
-## ✨ Features
+### 🏁 **Race Overview** — Live Dashboard
+- Year/Race/Session selector with FastF1 integration
+- Race metadata card (circuit, date, session type)
+- Live leaderboards (final results or practice/quali standings)
+- Lap-by-lap gap evolution chart (top 10 drivers)
+- Database integration (predicted vs actual leaderboards)
 
-### 🔮 **ML-Powered Predictions**
-- XGBoost model trained on 2023-2024 F1 seasons
-- 50+ features per driver (lap times, sectors, tire performance)
-- Confidence scoring (HIGH/MEDIUM/LOW) based on data quality
-- Pre-race prediction freezing (immutable snapshots)
+### 👤 **Driver Dashboard** — Telemetry & Performance
+- Driver selector with instant profile loading
+- Driver info card (name, team, position, points)
+- Telemetry visualization (Speed/Throttle/Brake subplots)
+- Lap history table (up to 50 laps with detailed metrics)
+- Teammate comparison section
 
-### 📊 **Interactive Dashboard**
-- **6 Comprehensive Tabs**: Race Info, Predictions, Results, Analysis, Team Strength, Export
-- **Real-time Validation**: Data quality metrics, extreme gap detection, confidence scoring
-- **Beautiful Visualizations**: Plotly charts, team strength bars, position comparisons
-- **Smart Filtering**: Team filters, driver search, live result counts
+### 📊 **Statistics** — Season Analytics
+- Championship standings (sorted by points)
+- Top 10 drivers leaderboard chart
+- Prediction accuracy tracking (MAE, winner%, podium%)
+- Team performance aggregation
+- Historical trends
 
-### 🎯 **Advanced Analytics**
-- Position accuracy (MAE)
-- Time predictions with uncertainty ranges (±2-16s)
-- Winner & podium correctness tracking
-- Dark horse detection (surprise performers)
-- Team strength index (0-100 scale)
-
-### 🏆 **Production Features**
-- FastAPI backend with 5 REST endpoints
-- SQLAlchemy ORM with SQLite database
-- Immutable prediction storage
-- Post-race result syncing
-- CSV/Excel exports
-- Docker deployment ready
-
----
+### 🤖 **AI Predictions** — ML Forecasts
+- Prediction selector from database
+- Confidence gauge (HIGH/MEDIUM/LOW with animation)
+- Feature coverage metric
+- Predicted leaderboard (20 drivers with DNF risk)
+- Podium predictions (P1/P2/P3)
+- Post-race accuracy metrics
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Python 3.11+
+- Python 3.13+
 - pip or conda
 - Git
 
@@ -51,8 +50,8 @@ A production-ready F1 race prediction system with interactive web dashboard, pow
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/f1predict.git
-cd f1predict
+git clone https://github.com/Arths17/f1tracker.git
+cd f1tracker
 
 # Create virtual environment
 python -m venv .venv
@@ -62,289 +61,277 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### Running the App
+### Running TRKR
 
-#### Option 1: Streamlit Dashboard Only
 ```bash
-streamlit run f1_tracker_app.py
-```
-Open http://localhost:8501
-
-#### Option 2: Full Stack (Backend + Frontend)
-
-**Terminal 1 - Start FastAPI Backend:**
-```bash
-uvicorn app.main:app --reload
+source .venv/bin/activate
+streamlit run trkr/app.py
 ```
 
-**Terminal 2 - Start Streamlit Frontend:**
-```bash
-streamlit run f1_tracker_app.py
+Open **http://localhost:8501** in your browser.
+
+## 📖 How It Works
+
+### Data Sources
+- **FastF1**: Real-time F1 session data (schedules, lap times, telemetry, positions)
+- **SQLAlchemy ORM**: Stores predictions, evaluation metrics, and race results
+- **XGBoost**: ML engine for race predictions (existing integration)
+
+### Page Workflow
+
+**Race Overview:**
+1. Select year → race → session
+2. View live race info and leaderboard
+3. Analyze gap evolution over laps
+4. Compare with predicted standings
+
+**Driver Dashboard:**
+1. Select year → race → session → driver
+2. View driver profile (name, team, points)
+3. Analyze telemetry (speed/throttle/brake)
+4. Review lap history
+5. Compare with teammates
+
+**Statistics:**
+1. Select season
+2. View championship standings
+3. Check prediction accuracy metrics
+4. Analyze team performance
+
+**AI Predictions:**
+1. Select race from database
+2. View confidence gauge & feature coverage
+3. Review predicted leaderboard
+4. Check podium predictions
+5. See accuracy metrics (post-race)
+
+## 🏗️ Project Structure
+
 ```
-
----
-
-## 📖 Usage
-
-### 1️⃣ **Train the Model** (Optional - Pre-trained models included)
-```bash
-python main.py --mode train --seasons 2023 2024
-```
-
-### 2️⃣ **Generate Predictions**
-```bash
-# Via CLI
-python main.py --mode predict --year 2024 --race "Abu Dhabi" --load-models
-
-# Via API
-curl -X POST "http://localhost:8000/predict" \
-  -H "Content-Type: application/json" \
-  -d '{"year": 2024, "race": "Abu Dhabi"}'
-```
-
-### 3️⃣ **Sync Race Results**
-```bash
-curl -X POST "http://localhost:8000/results/sync/2024/Abu%20Dhabi"
-```
-
-### 4️⃣ **View in Dashboard**
-Open the Streamlit app and select your race from the dropdown!
-
----
-
-## 🏗️ Architecture
-
-```
-f1predict/
-├── app/                        # FastAPI Backend
-│   ├── main.py                # API entrypoint
-│   ├── models.py              # SQLAlchemy ORM models
-│   ├── schemas.py             # Pydantic schemas
-│   ├── services.py            # Business logic
-│   ├── api.py                 # Route handlers
-│   ├── database.py            # DB connection
-│   └── settings.py            # Configuration
+f1tracker/
+├── trkr/                           # TRKR Multipage Streamlit App
+│   ├── app.py                      # Main launcher & router (115 lines)
+│   │   ├ Streamlit configuration
+│   │   ├ Database initialization
+│   │   └ Sidebar navigation
+│   │
+│   ├── pages/                      # 4 Main Pages
+│   │   ├── race_overview.py        # Live race dashboard (223 lines)
+│   │   ├── driver_dashboard.py     # Driver telemetry (168 lines)
+│   │   ├── statistics.py           # Season analytics (197 lines)
+│   │   └── ai_predictions.py       # ML forecasts (232 lines)
+│   │
+│   ├── utils/                      # Modular Functions
+│   │   ├── live.py                 # FastF1 wrappers (206 lines, 7 functions)
+│   │   ├── visuals.py              # Plotly visualizations (256 lines, 6+ functions)
+│   │   ├── metrics.py              # Calculations (196 lines, 8+ functions)
+│   │   ├── __init__.py
+│   │   └── (utilities)
+│   │
+│   ├── README.md                   # TRKR-specific documentation
+│   └── assets/                     # Images and static files
 │
-├── models/                     # Trained ML models
-│   ├── FinishPosition_xgboost.pkl
-│   ├── scaler_FinishPosition.pkl
-│   └── feature_columns.pkl
+├── app/                            # F1 Tracker Backend
+│   ├── database.py                 # SQLAlchemy ORM setup
+│   ├── models.py                   # Race, Prediction, Metric models
+│   ├── settings.py                 # Configuration
+│   ├── main.py                     # FastAPI endpoints (optional)
+│   ├── __init__.py
+│   └── (other modules)
 │
-├── f1_tracker_app.py          # Main Streamlit app
-├── streamlit_app.py           # Alternative Streamlit app
-├── data_fetcher.py            # FastF1 data fetching
-├── predictor.py               # ML prediction engine
-├── trainer.py                 # Model training
-├── main.py                    # CLI interface
-│
-├── cache/                      # FastF1 data cache
-├── dashboard/                  # Additional dashboards
-├── requirements.txt           # Python dependencies
-├── Dockerfile                 # Container deployment
-├── .env.example               # Environment template
-└── README.md                  # This file
+├── cache/                          # FastF1 cached data
+├── requirements.txt                # Python dependencies
+├── .env.example                    # Environment template
+├── README.md                       # Project README (this file)
+└── .gitignore
 ```
 
----
+## 🔌 Technology Stack
 
-## 🔧 Configuration
+| Component | Technology | Version |
+|-----------|-----------|---------|
+| **Web Framework** | Streamlit | 1.52.1 |
+| **F1 Data Source** | FastF1 | 3.7.0 |
+| **Visualization** | Plotly | 6.5.0 |
+| **Data Processing** | Pandas | 2.3.3 |
+| **Database ORM** | SQLAlchemy | 2.0.45 |
+| **ML Engine** | XGBoost | Latest |
+| **Numerical** | NumPy | 2.3.5 |
+| **Python** | 3.13+ | - |
 
-### Environment Variables
+## 📊 Database Schema
 
-Create a `.env` file:
+```
+races
+├── id (PK)
+├── year
+├── round_number
+├── race_name
+├── circuit_name
+└── event_date
 
+predictions
+├── id (PK)
+├── race_id (FK)
+├── confidence_score
+├── feature_coverage
+└── created_at
+
+prediction_entries
+├── id (PK)
+├── prediction_id (FK)
+├── driver_code
+├── driver_name
+├── predicted_position
+├── predicted_gap
+├── uncertainty
+└── confidence
+
+evaluation_metrics
+├── id (PK)
+├── race_id (FK)
+├── position_mae
+├── time_mae
+├── winner_correct
+├── podium_accuracy
+└── skill_score
+```
+
+## 🎯 Key Capabilities
+
+### Data Processing
+- ✅ Real-time session data loading (practice, quali, race)
+- ✅ Lap-by-lap analysis with gap calculations
+- ✅ Telemetry extraction (speed, throttle, brake)
+- ✅ Best lap identification and comparison
+
+### Visualizations
+- ✅ Interactive gap evolution charts
+- ✅ Telemetry subplots (speed/throttle/brake)
+- ✅ Horizontal bar leaderboards
+- ✅ Confidence gauges with animations
+- ✅ Accuracy heatmaps
+
+### Metrics & Analytics
+- ✅ Position prediction MAE
+- ✅ Winner accuracy tracking
+- ✅ Podium prediction rates
+- ✅ DNF probability estimation
+- ✅ Skill scoring (0-100)
+
+### Performance
+- ✅ @st.cache_resource for expensive operations
+- ✅ FastF1 data caching
+- ✅ Database query optimization
+- ✅ Lazy database initialization
+
+## 🚀 Deployment
+
+### Local Testing
 ```bash
-# Database
-DATABASE_URL=sqlite:///./f1prod.db
-
-# FastF1
-FASTF1_CACHE_DIR=cache
-
-# Prediction Settings
-PREDICTION_FREEZE_POLICY=post_qualifying
-
-# API
-API_HOST=0.0.0.0
-API_PORT=8000
+cd /path/to/f1tracker
+source .venv/bin/activate
+streamlit run trkr/app.py
 ```
 
-### Database Schema
+### Streamlit Cloud
+1. Push code to GitHub
+2. Connect repository to Streamlit Cloud
+3. Set main file: `trkr/app.py`
+4. Deploy!
 
-```sql
--- Core tables
-races (id, year, round, name, circuit, event_date)
-predictions (race_id, confidence_level, confidence_score, feature_coverage, snapshot_ts)
-prediction_entries (prediction_id, driver, team, predicted_position, predicted_race_time, gap, uncertainty)
-race_results (race_id, driver, team, position, time, status, points)
-evaluation_metrics (race_id, prediction_id, position_mae, time_mae_seconds, winner_correct, podium_accuracy)
-```
-
----
-
-## 🎯 Key Metrics Explained
-
-| Metric | Description | Good | Acceptable | Poor |
-|--------|-------------|------|------------|------|
-| **Confidence** | Data quality indicator | HIGH (85+) | MEDIUM (70-84) | LOW (<70) |
-| **Feature Coverage** | % of ML features retrieved | ≥85% | 70-84% | <70% |
-| **Position MAE** | Avg position error | ≤2.0 | 2.0-3.5 | >3.5 |
-| **Podium Accuracy** | % podium positions correct | ≥67% | 33-66% | <33% |
-
-**Detailed explanations:** See [F1_TRACKER_GUIDE.md](F1_TRACKER_GUIDE.md)
-
----
-
-## 📊 Dashboard Screenshots
-
-### Race Info Tab
-![Race Info](https://via.placeholder.com/600x300.png?text=Race+Info+Tab)
-
-### Predictions Tab
-![Predictions](https://via.placeholder.com/600x300.png?text=Predictions+Tab)
-
-### Analysis Tab
-![Analysis](https://via.placeholder.com/600x300.png?text=Analysis+Tab)
-
----
-
-## 🐳 Docker Deployment
-
+### Docker (Optional)
 ```bash
-# Build image
-docker build -t f1-tracker .
-
-# Run container
-docker run -p 8000:8000 -v $(pwd)/cache:/app/cache f1-tracker
-
-# Or use docker-compose
-docker-compose up
+docker build -t trkr .
+docker run -p 8501:8501 trkr
 ```
 
----
+## 📝 Recent Updates
 
-## 📡 API Endpoints
+**v2.0 - TRKR Multipage Release**
+- ✅ Rebuilt as multipage Streamlit app
+- ✅ 4 dedicated pages with full features
+- ✅ FastF1 live data integration
+- ✅ Improved visualizations (Plotly)
+- ✅ AI prediction integration
+- ✅ Database connectivity
+- ✅ Telemetry analysis
+- ✅ Historical statistics
 
-### Predictions
-```bash
-POST /predict
-GET /predictions/{race_id}
-```
-
-### Results
-```bash
-GET /results/{race_id}
-POST /results/sync/{year}/{race}
-```
-
-### Metrics
-```bash
-GET /metrics/{race_id}
-```
-
-### Health
-```bash
-GET /health
-```
-
-**Full API docs:** http://localhost:8000/docs (when backend is running)
-
----
+**v1.0 - F1 Tracker Original**
+- ✅ Single-page dashboard
+- ✅ XGBoost predictions
+- ✅ Race results tracking
 
 ## 🧪 Testing
 
 ```bash
-# Test prediction pipeline
-python main.py --mode predict --year 2024 --race "Qatar" --load-models
+# Verify all Python files compile
+python -m py_compile trkr/app.py trkr/utils/*.py trkr/pages/*.py
 
-# Test API
-curl -X GET "http://localhost:8000/health"
+# Check imports
+python -c "from trkr.utils import live, visuals, metrics; print('✅ All imports OK')"
 
 # Test database
-sqlite3 f1prod.db "SELECT COUNT(*) FROM races;"
-```
+python -c "from app.database import SessionLocal; db = SessionLocal(); print('✅ Database connected')"
 
----
+# Test FastF1
+python -c "from trkr.utils.live import load_season_schedule; print(f'✅ {len(load_season_schedule(2025))} races loaded')"
+```
 
 ## 🤝 Contributing
 
-Contributions welcome! Please:
+Contributions welcome! Areas for enhancement:
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- **[FastF1](https://github.com/theOehrly/Fast-F1)** - Official F1 timing data
-- **[XGBoost](https://xgboost.readthedocs.io/)** - ML prediction engine
-- **[Streamlit](https://streamlit.io/)** - Interactive dashboard framework
-- **[FastAPI](https://fastapi.tiangolo.com/)** - Modern API framework
-
----
+- [ ] Additional telemetry metrics (brake points, DRS usage)
+- [ ] Pit stop strategy simulation
+- [ ] Multi-season comparison
+- [ ] Fantasy F1 integration
+- [ ] Live race lap-by-lap updates
+- [ ] Mobile app version
+- [ ] More visualization options
 
 ## 📞 Support
 
-- **Documentation:** [F1_TRACKER_GUIDE.md](F1_TRACKER_GUIDE.md)
-- **Issues:** [GitHub Issues](https://github.com/YOUR_USERNAME/f1predict/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/YOUR_USERNAME/f1predict/discussions)
+- **Documentation**: See [trkr/README.md](trkr/README.md) for detailed TRKR features
+- **Issues**: Report bugs via GitHub Issues
+- **Discussions**: Questions? Start a GitHub Discussion
+
+## 📜 License
+
+MIT License - see [LICENSE](LICENSE) for details
+
+## 🙏 Acknowledgments
+
+- **[FastF1](https://github.com/theOehrly/Fast-F1)** - Official F1 timing data API
+- **[Streamlit](https://streamlit.io/)** - Interactive web framework
+- **[Plotly](https://plotly.com/)** - Interactive visualizations
+- **[XGBoost](https://xgboost.readthedocs.io/)** - ML prediction engine
+- **[SQLAlchemy](https://www.sqlalchemy.org/)** - Database ORM
 
 ---
 
-## 🗺️ Roadmap
-
-- [ ] Live race updates (lap-by-lap predictions)
-- [ ] Multi-season comparison dashboard
-- [ ] Driver performance trends
-- [ ] Strategy simulation (pit stops, tire choices)
-- [ ] Mobile app version
-- [ ] Fantasy F1 integration
-- [ ] Social media result sharing
-
----
-
-## 📈 Project Stats
-
-- **Languages:** Python (ML, Backend, Frontend)
-- **ML Framework:** XGBoost, scikit-learn
-- **Data Source:** FastF1 API (official F1 timing)
-- **Training Data:** 2023-2024 F1 seasons (~40 races)
-- **Features:** 50+ per driver (lap times, sectors, tire data)
-- **Accuracy:** ~60-80% podium prediction accuracy
-
----
-
-**Built with ❤️ for F1 fans and data enthusiasts**
-
----
-
-## 🏁 Sample Output
+## 🏁 Quick Demo
 
 ```
-2024 Abu Dhabi Grand Prix - Prediction Results
-==============================================
-Confidence: 🟢 HIGH (92/100)
-Feature Coverage: ✅ 89.3%
+TRKR — Race Overview
+═══════════════════════════════════════════════════════════════════════════════
 
-🥇 Predicted Winner: Max Verstappen
-🏆 Predicted Podium: VER / NOR / LEC
+🏁 Abu Dhabi Grand Prix - Race 2024
+───────────────────────────────────
+Year: 2024 | Round: 24 | Session: Race
+Circuit: Yas Marina | Location: Abu Dhabi, UAE
 
-Position MAE: 1.85 positions
-Winner Correct: ✅ Yes
-Podium Accuracy: 100%
+Final Results:
+  1. Max Verstappen (RBR)    0.0s
+  2. Lando Norris (McLaren) +8.3s
+  3. Charles Leclerc (Ferrari) +12.1s
 
-🌟 Dark Horses: Piastri (P4, +11.2s), Alonso (P5, +14.8s)
+Gap Evolution: [Chart showing driver gaps over 58 laps]
 ```
 
 ---
 
-**Star ⭐ this repo if you found it useful!**
+**Built with ❤️ for F1 fans, engineers, and data enthusiasts**
+
+**⭐ Star this repo if you found it useful!**
