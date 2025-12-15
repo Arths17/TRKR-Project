@@ -198,9 +198,11 @@ def get_available_races(year: int) -> list:
     races = []
     for _, row in schedule.iterrows():
         if pd.notna(row['RoundNumber']):
-            races.append((
-                int(row['RoundNumber']),
-                row['EventName']
-            ))
+            round_num = int(row['RoundNumber'])
+            if round_num > 0:  # skip testing/round 0 events
+                races.append((
+                    round_num,
+                    row['EventName']
+                ))
     
     return races

@@ -106,9 +106,12 @@ def show():
             
             if prediction.entries:
                 entries_data = []
+                confidence = prediction.confidence_score or 0.5
+                confidence_pct = confidence * 100 if confidence <= 1 else confidence
                 for entry in prediction.entries:
                     dnf_risk = metrics.calculate_dnf_probability(
-                        pd.Series({'gap_to_leader': entry.gap or 0})
+                        entry.gap or 0,
+                        confidence_pct
                     ) if entry.gap else 0
                     
                     entries_data.append({
@@ -137,7 +140,8 @@ def show():
                 # Alert for extreme gaps
                 extreme_gaps = entries_df[entries_df['DNF Risk'].str.contains('%', regex=False)]
                 if not extreme_gaps.empty:
-                    high_risk = entries_df[entries_df['DNF Risk'].astype(float) > 0.5]
+                    risk_values = extreme_gaps['DNF Risk'].str.rstrip('%').astype(float)
+                    high_risk = extreme_gaps[risk_values > 50]
                     if not high_risk.empty:
                         st.warning(f"⚠️ {len(high_risk)} drivers with >50% DNF risk detected")
             
